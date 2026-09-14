@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import { cn } from "@/lib/utils";
+import { QueryProvider } from "@/components/query-providers";
 
 import "./globals.css";
 
@@ -19,7 +20,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       suppressHydrationWarning
     >
       <body className="min-h-full flex flex-col" suppressHydrationWarning>
-        {children}
+        <QueryProvider>{children}</QueryProvider>
       </body>
     </html>
   );
