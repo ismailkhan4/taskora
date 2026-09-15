@@ -16,11 +16,13 @@ export const MobileSidebar = () => {
   }, [pathname]);
   return (
     <Sheet modal={false} open={isOpen} onOpenChange={setIsOpen}>
-      <SheetTrigger>
-        <Button variant="secondary" className="lg:hidden">
-          <MenuIcon className="size-4 text-neutral-500" />
-        </Button>
-      </SheetTrigger>
+      <SheetTrigger
+        render={
+          <Button variant="secondary" className="lg:hidden">
+            <MenuIcon className="size-4 text-neutral-500" />
+          </Button>
+        }
+      />
       <SheetContent side="left" className="p-0">
         <Sidebar />
       </SheetContent>
