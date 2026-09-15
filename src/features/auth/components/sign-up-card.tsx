@@ -1,3 +1,5 @@
+'use client'
+
 import { z } from "zod";
 
 import Link from "next/link";
@@ -26,7 +28,7 @@ import { registerSchema } from "../schemas";
 import { useRegister } from "../api/use-register";
 
 export const SignUpCard = () => {
-  const { mutate } = useRegister();
+  const { mutate, isPending } = useRegister();
 
   const form = useForm<z.infer<typeof registerSchema>>({
     resolver: zodResolver(registerSchema),
@@ -101,12 +103,12 @@ export const SignUpCard = () => {
               <ErrorMessage name="password" />
             </div>
             <Button
-              disabled={false}
+              disabled={isPending}
               size={"lg"}
               className="w-full"
               type="submit"
             >
-              Sign in
+              Register
             </Button>
           </form>
         </FormProvider>
@@ -116,22 +118,22 @@ export const SignUpCard = () => {
       </div>
       <CardContent className="p-7 flex flex-col gap-y-4">
         <Button
-          disabled={false}
+          disabled={isPending}
           variant="secondary"
           size="lg"
           className="w-full"
         >
           <FcGoogle className="mr-2 size-5" />
-          Login with Google
+          Register with Google
         </Button>
         <Button
-          disabled={false}
+          disabled={isPending}
           variant="secondary"
           size="lg"
           className="w-full"
         >
           <FaGithub className="mr-2 size-5" />
-          Login with Github
+          Register with Github
         </Button>
       </CardContent>
       <div className="px-7">
