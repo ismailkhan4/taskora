@@ -17,13 +17,12 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { DottedSeparator } from "@/components/dotted-separator";
 
-import { createWorkspaceSchema } from "../schemas";
+import { cn } from "@/lib/utils";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
-import { useMutation } from "@tanstack/react-query";
 import { useCreateWorkspace } from "../api/use-create-workspace";
-import { HtmlContext } from "next/dist/server/route-modules/pages/vendored/contexts/entrypoints";
+import { createWorkspaceSchema } from "../schemas";
 
 interface CreateWorkspaceFormProps {
   onCancel?: () => void;
@@ -155,6 +154,7 @@ export const CreateWorkspaceForm = ({ onCancel }: CreateWorkspaceFormProps) => {
                 variant="secondary"
                 onClick={onCancel}
                 disabled={isPending}
+                className={cn(!onCancel && "invisible")}
               >
                 Cancel
               </Button>
