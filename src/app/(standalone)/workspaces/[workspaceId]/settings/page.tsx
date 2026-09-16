@@ -23,7 +23,6 @@ const WorkspaceIdSettingPage = async ({
     redirect(`/workspaces/${workspaceId}`);
   }
 
-
   return (
     <div className="w-full lg:max-w-xl">
       <UpdateWorkspaceForm
@@ -31,6 +30,7 @@ const WorkspaceIdSettingPage = async ({
           $id: initialValues.$id,
           name: initialValues.name,
           imageUrl: initialValues.imageUrl,
+          inviteCode: initialValues.inviteCode,
         }}
       />
     </div>
