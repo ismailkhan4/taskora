@@ -4,10 +4,16 @@ import { Hono } from "hono";
 
 import { MemberRole } from "@/features/members/types";
 import { sessionMiddleware } from "@/lib/session-middleware";
-import { DATABASE_ID, MEMBERS_ID, WORKSPACES_ID } from "@/config";
-
-import { createWorkspaceSchema } from "../schemas";
 import { generateInviteCode } from "@/lib/utils";
+import { getMember } from "@/features/members/utils";
+import {
+  DATABASE_ID,
+  IMAGES_BUCKET_ID,
+  MEMBERS_ID,
+  WORKSPACES_ID,
+} from "@/config";
+
+import { createWorkspaceSchema, updateWorkspaceSchema } from "../schemas";
 
 const app = new Hono()
   .get("/", sessionMiddleware, async (c) => {
@@ -64,7 +70,7 @@ const app = new Hono()
           name,
           userId: user.$id,
           imageUrl: uploadedImageUrl,
-          inviteCode: generateInviteCode(6)
+          inviteCode: generateInviteCode(6),
         },
       });
 
@@ -78,6 +84,60 @@ const app = new Hono()
           role: MemberRole.ADMIN,
         },
       });
+      return c.json({ data: workspace });
+    },
+  )
+  .patch(
+    "/:workspaceId",
+    sessionMiddleware,
+    zValidator("form", updateWorkspaceSchema),
+    async (c) => {
+      const tablesDB = c.get("tablesDB");
+      const storage = c.get("storage");
+      const user = c.get("user");
+
+      const { workspaceId } = c.req.param();
+      const { name, image } = c.req.valid("form");
+
+      const member = await getMember({
+        tablesDB,
+        workspaceId,
+        userId: user.$id,
+      });
+
+      if (!member || member.role !== MemberRole.ADMIN) {
+        return c.json({ error: "Unauthorized" }, 401);
+      }
+
+      let uploadedImageUrl: string | undefined;
+
+      if (image instanceof File) {
+        const file = await storage.createFile({
+          bucketId: IMAGES_BUCKET_ID,
+          fileId: ID.unique(),
+          file: image,
+        });
+
+        const arrayBuffer = await storage.getFilePreview({
+          bucketId: IMAGES_BUCKET_ID,
+          fileId: file.$id,
+        });
+
+        uploadedImageUrl = `data:image/png;base64,${Buffer.from(arrayBuffer).toString("base64")}`;
+      } else {
+        uploadedImageUrl = image;
+      }
+
+      const workspace = await tablesDB.updateRow({
+        databaseId: DATABASE_ID,
+        tableId: WORKSPACES_ID,
+        rowId: workspaceId,
+        data: {
+          name,
+          imageUrl: uploadedImageUrl,
+        },
+      });
+
       return c.json({ data: workspace });
     },
   );

@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { Suspense } from "react";
 import { Inter } from "next/font/google";
 import { NuqsAdapter } from "nuqs/adapters/next/app";
 import { cn } from "@/lib/utils";
@@ -20,10 +21,12 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
     <html lang="en">
       <body className={cn(inter.className,'antialiased min-h-screen')}>
         <QueryProvider>
-          <NuqsAdapter>
-            <Toaster />
-            {children}
-          </NuqsAdapter>
+          <Suspense fallback={null}>
+            <NuqsAdapter>
+              <Toaster />
+              {children}
+            </NuqsAdapter>
+          </Suspense>
         </QueryProvider>
       </body>
     </html>
