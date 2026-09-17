@@ -1,5 +1,3 @@
-import z from "zod";
-
 import { Hono } from "hono";
 import { zValidator } from "@hono/zod-validator";
 import { ID } from "node-appwrite";
